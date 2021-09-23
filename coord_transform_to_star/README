@@ -1,0 +1,92 @@
+README
+
+v.3.0(210604)
+
+This program can be used to apply a coordinate transformation (Euler angles, 
+orthogonal translation in Angstrom) (e.g. from a superposition of two 
+PDB files) to the alignment parameters of particles of a reconstruction. It can
+be used to align a data set to a reference data set without particle alignment,
+if the coordinate transformation of two fitted PDB models is known.
+It can also be used to center particles of a reconstruction on a specific 
+domain or in the box without new particle alignment.
+
+The program reads and writes Relion 3.1 compatible (data) star files.
+
+See -h --help for all options.
+
+Written by Dominik A. Herbst (dherbst@berkeley.edu).
+
+Usage without guarantees or warranties!
+
+Tested with anaconda python 3.7.
+
+
+--------------------------------------------------------------------------------
+
+
+usage: coord_transform_to_star.py [options]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i I                  Input (data) star file with all ptcl.
+  -e E E E              Euler angles (alpha, beta, gamma) according to
+                        Crowther with rotations around ZYZ (3D, e.g.: 30.0
+                        10.0 0.0)
+  -t T T T              Translation vector of the reconstruction in ANGSTROM
+                        (3D, e.g.: 0.0 10.0 20.0)
+  -o O                  Output filename. Default: [transformed.star]
+  -apix APIX            Pixel size in Angstrom. Important to scale relative to
+                        coordinate transformations.
+  -box_center BOX_CENTER [BOX_CENTER ...]
+                        Box center in PIXEL. Coordinate transformations
+                        derived from CCP4 programs refer to rotations around
+                        the origin (0,0,0), while the relion origin is in the
+                        center of the box. In order to use CCP4 coordinate
+                        transformations, provide the coordinates of the box
+                        center, e.g. 50.0 50.0 50.0 for a rectangular box with
+                        an endge length of 100 pixel.)
+  -v                    Increase output verbosity
+
+
+=================================================================================
+
+Installation:
+
+	The binary was compiled on Linux (CentOS 7.2) and requires no installation.
+
+
+
+=================================================================================
+
+
+
+Example:
+	see example/example.pdf
+
+
+The programs allows applying a coordinate transformation to particle alignment 
+parameters. E.g.:
+Your (3D) reconstruction is not centered and you want to shift it to the center 
+(or you wan to center on a specific region) and/or rotate it.
+- In that case you can fit a model (PDB) (or anything that can be fit) to you 
+  reconstruction (save the pdb = original.pdb).
+- Then you can transform the model to its new location (e.g. centered and rotated)
+  and save it at its new location (transformed.pdb)
+- Then you superpose original.pdb on transformed.pdb (e.g. in coot). This will 
+  return a transformation in Euler angles and an orthogonal translation vector
+  in Angstroem (coot shows this in the terminal). 
+- Now you can use this program to apply the transformation to your Relion 3.1 star
+  file.
+Afterwards, new refinements or reconstruction jobs will return a reconstruction at
+the location of your transformed pdb file. (If you run a refinement, don't forget
+to transform your reference map too)
+
+Useful applications:
+- Centering of particles based on the 3D reconstruction prior to re-extraction
+- Centering on a neighboring region (e.g. for re-extraction ... )
+- Alignment of the coordinate Z-axis to the box Z-axis (e.g. for applying symmetry)
+- Alignment of two related, but different data sets prior to reconstruction (e.g. if
+  you want that your reconstructed maps for EMDB/PDB deposition are aligned without
+  introducing interpolation artifacts)
+
+
